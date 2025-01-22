@@ -43,5 +43,13 @@ Primero añadi las sensibilidades del raton
 
 Y luego hice que la camara calculara en cada frame la posicion x e y del raton gracias a estas lineas:
 
+-Primero calcula el movimiento del raton le suma las sensibilidad que es modificable y se asegura de que a pesar de que el juego este mal optimizado siga funcionando correctamente.
+
         _currentAngle.x -= mouseY * _mouseSensitivity * Time.deltaTime;
         _currentAngle.y += mouseX * _mouseSensitivity * Time.deltaTime;
+
+Finalmente utilice:
+
+-Esta linea lo que hace es utilizar los angulos previamente explicados y aplicarlos.
+        
+         transform.localRotation = Quaternion.Euler(_currentAngle.x, _currentAngle.y, 0);
