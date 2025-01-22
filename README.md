@@ -34,3 +34,14 @@
 -Objetos
 
 ![imagen](https://github.com/user-attachments/assets/96d94293-b1d8-405c-a79a-3344b820d64f)
+
+-Explicacion Primera Persona
+
+Primero añadi las sensibilidades del raton
+
+![imagen](https://github.com/user-attachments/assets/e30e90f6-cdea-4ad9-80ed-ca545412764e)
+
+Y luego hice que la camara calculara en cada frame la posicion x e y del raton gracias a estas lineas:
+
+        _currentAngle.x -= mouseY * _mouseSensitivity * Time.deltaTime;
+        _currentAngle.y += mouseX * _mouseSensitivity * Time.deltaTime;
