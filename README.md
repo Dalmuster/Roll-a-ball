@@ -53,3 +53,130 @@ Finalmente utilice:
 -Esta linea lo que hace es utilizar los angulos previamente explicados y aplicarlos.
         
          transform.localRotation = Quaternion.Euler(_currentAngle.x, _currentAngle.y, 0);
+
+-Utilice las teclas '1', '2', '3' para cambiar las camaras
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SwitchCamera(Main_Camera);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SwitchCamera(PrimeraPersona);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SwitchCamera(CamaraRotatoria);
+        }
+
+-Mecanicas añadidas
+
+-Sistema de vida que va menguando en función de las veces que pise la lava, en este caso hay dos niveles de lava que dependiendo de la velocidad o si pisa la lava dos veces seguidas el jugador perdera vida en caso de ser 0 el jugador perdera automaticamente.
+
+        void OnTriggerEnter(Collider other){
+    if(other.gameObject.CompareTag("Lava")){
+        if(vida>0){
+        rb.AddForce(Vector3.up * 10f, ForceMode.Impulse);
+        vida--;
+        loseTextObject.GetComponent<TextMeshProUGUI>().text = "Vidas: "+vida;
+        Vida.text = "Vida: " + vida.ToString();
+        }
+    }
+    if(other.gameObject.CompareTag("LavaV")){
+        rb.AddForce(Vector3.up * 10f, ForceMode.Impulse);
+        anim.SetBool("Quemado", true);
+        if(vida==0) 
+        {
+            Destroy(gameObject);
+
+        loseTextObject.gameObject.SetActive(true);
+        loseTextObject.GetComponent<TextMeshProUGUI>().text = "Perdiste!";
+        }
+        anim.SetBool("Quemado", false);
+    }
+    
+![imagen](https://github.com/user-attachments/assets/bf2d7349-b62f-4200-899d-8a20779cb1bb)
+
+- Condicion para ganar, uso de los pickups: En este caso se puede ver que cada vez que se obtiene un pickup este desaparecera de la vista del jugador y añadira un punto a la puntuación y en caso de que sea la ultima moneda (en este caso 27) mostrara un mensaje al jugador mostrando que a ganado y destruyendo al enemigo.
+
+        void OnTriggerEnter(Collider other){
+            if(other.gameObject.CompareTag("PickUp")){
+                other.gameObject.SetActive(false);
+                puntuacion++;
+                mostrarPuntuacion();
+            }
+          void mostrarPuntuacion ()
+                {
+                    MostrarPuntuacion.text = "Puntuacion " + puntuacion.ToString();
+                    if (puntuacion > 26)
+                        {
+                            winTextObject.gameObject.SetActive(true);
+
+                            Destroy(GameObject.FindGameObjectWithTag("Enemy"));
+                        }
+}
+
+  ![imagen](https://github.com/user-attachments/assets/7a3868cd-76bc-4973-a8f4-29b781082b28)
+
+- Mecanica de reaparición, al comienzo del juego se obtiene la posicion inicial y en caso de que el jugador se caiga del mapa tocara un plano invisible que lo teletransportara al inicio del nivel.
+
+         void Start()
+            {
+                Respawn = transform.position;
+            }
+
+
+          void OnTriggerEnter(Collider other){    
+            if (other.gameObject.CompareTag("Respawn"))
+            {
+                transform.position = Respawn;
+            }
+
+![imagen](https://github.com/user-attachments/assets/106cc416-4a85-4471-9afd-2e77b595f5fd)
+
+- Rampas propulsoras al tocar las rampas el jugador sera impulsado hacia adelante.
+
+        void OnTriggerEnter(Collider other){
+           if (other.gameObject.CompareTag("Rampa"))
+        {
+                Vector3 rampDirection = other.transform.forward;
+
+                rb.AddForce(-rampDirection * 10f, ForceMode.VelocityChange); 
+            }
+           if (other.gameObject.CompareTag("Rampa2"))
+            {
+                Vector3 rampDirection = other.transform.right;
+
+                rb.AddForce(-rampDirection * 20f, ForceMode.VelocityChange); 
+            }
+          }
+
+- Enemigos en este proyecto e utilizado dos enemigos que se encargaran de perseguir al jugador en dos de los tres niveles creados, el primero sera ligeramente mas lento que el jugador y tendra colisiones, pero el segundo sera muchísimo mas lento que el jugador pero atravesara las paredes del laberinto invisible, en caso de que toquen al jugador este sera eliminado mostrando el mensaje de derrota.
+
+            void Start()
+            {
+                navMeshAgent = GetComponent<NavMeshAgent>();
+            }
+
+            void Update()
+            {
+                if (player != null && navMeshAgent.isOnNavMesh)
+                {
+                    navMeshAgent.SetDestination(player.position);
+                }
+            }
+  
+        void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.CompareTag("Enemy"))
+            {
+                Destroy(gameObject);
+
+                loseTextObject.gameObject.SetActive(true);
+                loseTextObject.GetComponent<TextMeshProUGUI>().text = "Perdiste!";
+        
+            }
+            }
+
+Como se puede ver el objeto player a desaparecido al ser tocado por el enemigo.
+  
+![imagen](https://github.com/user-attachments/assets/cc0ea6eb-f7ce-41ef-8962-42f566f9d177)
